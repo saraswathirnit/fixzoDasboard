@@ -1,0 +1,2 @@
+1. bring data from db 
+2. bring additional data from the squidex , when they click on the show more
