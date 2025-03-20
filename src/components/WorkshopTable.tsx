@@ -195,6 +195,18 @@ const WorkshopModal = ({
                   </a>
                 </div>
               )}
+              
+                {/* <div className="flex items-center">
+                  <MapPin className="h-5 w-5 text-red-500 mr-2" />
+                  <a
+                    href={`https://repairs.autorox.co/workshop/vasant-motors-service-center-in-madhapur-hyderabad`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+                  >
+                    website page <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div> */}
               {workshopDetails?.franchiseDetails &&
                 workshopDetails.franchiseDetails.length > 0 && (
                   <div className="col-span-2">
@@ -517,6 +529,19 @@ const WorkshopModal = ({
                   {workshopDetails?.displayName}
                 </h2>
                 <p className="text-gray-600">{workshopDetails?.address}</p>
+                {/* {workshopDetails?.website && ( */}
+                  <a
+                    href={`https://repairs.autorox.co/workshop/gobyk-gandimaisamma-service-center-in-gandimaisamma-hyderabad`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    <span className="flex items-center gap-1 "> 
+                      <ExternalLink className="h-4 w-4 text-blue-600" />
+                      {"Website link"}
+                    </span>
+                  </a>
+                {/* )} */}
               </div>
             </div>
             <button
@@ -602,7 +627,6 @@ export const WorkshopTable: React.FC = () => {
     { id: "accidentRepairCount", label: "Accident Repairs" },
     { id: "topMakeName", label: "Experts In" },
     { id: "makeWiseCount", label: "Top Make Wise Count" },
-    { id: "workshopId", label: "Website Link" },
     { id: "typeOfVehicleServiced", label: "Type of vehicle serviced" },
     { id: "showSquidexData", label: "Squidex Data" },
   ];
@@ -642,12 +666,12 @@ export const WorkshopTable: React.FC = () => {
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
     new Set([
       "WorkshopName",
+      "isLive",
       "rating",
       "totalVehiclesServicedCount",
       "totalSpecializedServicesCount",
       "accidentRepairCount",
       "makeWiseCount",
-      "workshopId", // website link
       "showSquidexData",
       "topMakeName",
     ])
@@ -859,18 +883,6 @@ export const WorkshopTable: React.FC = () => {
               {workshop[columnId]}
             </span>
           </div>
-        );
-      case "workshopId":
-        return (
-          <button
-            onClick={() =>
-              handleWebsiteClick(workshop["squidexWorkshopWebsiteLink"] + "")
-            }
-            className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
-          >
-            <span>Page</span>
-            <ExternalLink className="h-4 w-4" />
-          </button>
         );
       case "isLive":
         return (

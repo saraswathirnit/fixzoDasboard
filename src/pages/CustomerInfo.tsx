@@ -54,7 +54,7 @@ const CustomerInfo = () => {
       try {
         const offset = (currentPage - 1) * pageSize;
         const response = await fetch(
-          `http://127.0.0.1:5000/getWorkshopBookingData?workshopId=36038&limit=${pageSize}&offset=${offset}`
+          `http://127.0.0.1:5000/getWorkshopBookingData?workshopId=${workshopId}&limit=${pageSize}&offset=${offset}`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch bookings');
