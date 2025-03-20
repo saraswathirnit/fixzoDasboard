@@ -12,12 +12,12 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-const generateRandomNumbers = (workshop: Workshop) => {
+const getIndivisualBookingCounts = (workshop: Workshop) => {
   // Generate random numbers if they don't exist
   if (!workshop.bookingCount) {
-    const total = Math.floor(Math.random() * (15000 - 8000) + 8000); // Between 8k-15k
-    const monthly = Math.floor(total * (Math.random() * 0.4 + 0.3)); // 30-70% of total
-    const daily = Math.floor(monthly * (Math.random() * 0.08 + 0.02)); // 2-10% of monthly
+    const total = 0; // Between 8k-15k
+    const monthly = 0; // 30-70% of total
+    const daily = 0; // 2-10% of monthly
 
     return {
       total,
@@ -28,15 +28,15 @@ const generateRandomNumbers = (workshop: Workshop) => {
 
   return {
     total: workshop.bookingCount,
-    monthly: workshop.monthlyBookings || Math.floor(workshop.bookingCount / 12),
-    daily: workshop.todayBookings || Math.floor(workshop.bookingCount / 365)
+    monthly: workshop.monthlyBookings || 0,
+    daily: workshop.todayBookings || 0
   };
 };
 
 const WorkshopCard = ({ workshop }: { workshop: Workshop }) => {
   const navigate = useNavigate();
   
-  const numbers = generateRandomNumbers(workshop);
+  const numbers = getIndivisualBookingCounts(workshop);
 
   return (
     <div 
@@ -84,7 +84,7 @@ const WorkshopCard = ({ workshop }: { workshop: Workshop }) => {
 };
 
 const getStateBookingCounts = async (state: string, city: string) => {
-  const response = await fetch('http://127.0.0.1:5000/api/location_bookings', {
+  const response = await fetch('http://127.0.0.1:5000/api/dashboard/location_bookings', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -103,32 +103,6 @@ const getStateBookingCounts = async (state: string, city: string) => {
   return data ? data : {};
 };
 
-const getCityBookingCounts = async (city: string) => {
-  const response = await fetch('http://127.0.0.1:5000/api/location_bookings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },  
-    body: JSON.stringify({
-      state: '',
-      city: city
-    })
-  });   
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch booking counts');
-  }
-
-  const data = await response.json();
-  return data.bookingCounts ? data.bookingCounts : 0;
-};
-
-const calculateTotalBookings = async (workshopList: Workshop[]) => {
-  if (!workshopList?.length) return 0;
-  const bookingCounts = await getStateBookingCounts(workshopList[0].state, workshopList[0].Town);
-  return bookingCounts;
-};
-
 const WorkshopCards = () => {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [loading, setLoading] = useState(true);
@@ -141,6 +115,9 @@ const WorkshopCards = () => {
   const [stateBookings, setStateBookings] = useState(0);
   const [cityBookings, setCityBookings] = useState(0);
   const [totalBookings, setTotalBookings] = useState(0);
+  const [bookingsLoading, setBookingsLoading] = useState(true);
+  const [filteredWorkshops, setFilteredWorkshops] = useState<Workshop[]>([]);
+
   useEffect(() => {
     const fetchWorkshops = async () => {
       try {
@@ -183,27 +160,91 @@ const WorkshopCards = () => {
   useEffect(() => {
     const fetchStateBookings = async () => {
       if (workshops.length && filters.selectedState) {
-        const bookingsCounts = await getStateBookingCounts(filters.selectedState, filters.selectedCity);
-        setStateBookings(bookingsCounts.stateBookingCounts);
-        setCityBookings(bookingsCounts.cityBookingCounts);
-        setTotalBookings(bookingsCounts.totalBookingCounts);
+        setBookingsLoading(true);
+        try {
+          const bookingsCounts = await getStateBookingCounts(filters.selectedState, filters.selectedCity);
+          setStateBookings(bookingsCounts.stateBookingCounts);
+          setCityBookings(bookingsCounts.cityBookingCounts);
+          setTotalBookings(bookingsCounts.totalBookingCounts);
+        } finally {
+          setBookingsLoading(false);
+        }
       }
     };
     fetchStateBookings();
   }, [workshops, filters.selectedState, filters.selectedCity]);
 
-  const filteredWorkshops = workshops
-    .filter(workshop => {
-      const stateMatch = workshop.state.toLowerCase() === filters.selectedState.toLowerCase();
-      const cityMatch = workshop.Town.toLowerCase() === filters.selectedCity.toLowerCase();
-      const nameMatch = searchTerm === '' || workshop.WorkshopName.toLowerCase().includes(searchTerm.toLowerCase());
-      return stateMatch && cityMatch && nameMatch;
-    })
-    .sort((a, b) => {
-      const aMonthly = a.monthlyBookings || (a.bookingCount ? Math.floor(a.bookingCount / 12) : 0);
-      const bMonthly = b.monthlyBookings || (b.bookingCount ? Math.floor(b.bookingCount / 12) : 0);
-      return bMonthly - aMonthly;
-    });
+
+  const getWorkshopBookingCounts = async (workshopIds: number[]) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/dashboard/workshopBookingCounts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          workshopIds
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch workshop booking counts');
+      }
+
+      const data = await response.json();
+      return data as Array<{
+        bookingCounts: number;
+        workshopId: number;
+      }>;
+
+    } catch (error) {
+      console.error('Error fetching workshop booking counts:', error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    if (!workshops) return;
+
+    // setFilteredWorkshops([]);
+    
+    const updateWorkshops = async () => {
+      if(workshops.length === 0) return;
+      const filtered = workshops
+        .filter(workshop => {
+          const stateMatch = workshop.state.toLowerCase() === filters.selectedState.toLowerCase();
+          const cityMatch = workshop.Town.toLowerCase() === filters.selectedCity.toLowerCase();
+          const nameMatch = searchTerm === '' || workshop.WorkshopName.toLowerCase().includes(searchTerm.toLowerCase());
+          return stateMatch && cityMatch && nameMatch;
+        })
+        .sort((a, b) => {
+          const aMonthly = a.monthlyBookings || (a.bookingCount ? Math.floor(a.bookingCount / 12) : 0);
+          const bMonthly = b.monthlyBookings || (b.bookingCount ? Math.floor(b.bookingCount / 12) : 0);
+          return bMonthly - aMonthly;
+        });
+
+      const workshopIds :any = filtered.map(workshop => workshop.ax_workshopId);
+      
+      try {
+        const bookingCounts = await getWorkshopBookingCounts(workshopIds);
+        
+        const workshopsWithBookings = filtered.map(workshop => {
+          const bookingData = bookingCounts.find(bc => bc.workshopId === workshop.ax_workshopId);
+          return {
+            ...workshop,
+            bookingCount: bookingData?.bookingCounts || workshop.bookingCount
+          };
+        }).sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0));
+
+        setFilteredWorkshops(workshopsWithBookings);
+      } catch (error) {
+        console.error('Error updating workshop booking counts:', error);
+        setFilteredWorkshops(filtered);
+      }
+    };
+
+    updateWorkshops();
+  }, [workshops, filters.selectedState, filters.selectedCity, searchTerm]);
 
   if (loading) {
     return (
@@ -240,7 +281,13 @@ const WorkshopCards = () => {
                       <span className="text-base font-bold text-slate-900">{stats.totalWorkshops}</span>
                       <span className="text-xs text-slate-500">workshops</span>
                     </div>
-                    <p className="text-xs text-indigo-600 font-medium">{formatNumber(stats.totalBookings)} bookings</p>
+                    {bookingsLoading ? (
+                      <div className="p-1">
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
+                    </div>
+                    ) : (
+                      <p className="text-xs text-indigo-600 font-medium">{formatNumber(stats.totalBookings)} bookings</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -255,7 +302,13 @@ const WorkshopCards = () => {
                       <span className="text-base font-bold text-slate-900">{stats.stateWorkshops}</span>
                       <span className="text-xs text-slate-500">in {filters.selectedState}</span>
                     </div>
-                    <p className="text-xs text-indigo-600 font-medium">{formatNumber(stats.stateBookings)} bookings</p>
+                    {bookingsLoading ? (
+                      <div className="p-1">
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
+                    </div>
+                    ) : (
+                      <p className="text-xs text-indigo-600 font-medium">{formatNumber(stats.stateBookings)} bookings</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -270,7 +323,13 @@ const WorkshopCards = () => {
                       <span className="text-base font-bold text-slate-900">{stats.cityWorkshops}</span>
                       <span className="text-xs text-slate-500">in {filters.selectedCity}</span>
                     </div>
-                    <p className="text-xs text-emerald-600 font-medium">{formatNumber(stats.cityBookings)} bookings</p>
+                    {bookingsLoading ? (
+                       <div className="p-1">
+                       <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
+                     </div>
+                     ) : (
+                      <p className="text-xs text-emerald-600 font-medium">{formatNumber(stats.cityBookings)} bookings</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -301,8 +360,8 @@ const WorkshopCards = () => {
       <div className="max-w-[2000px] mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {/* Workshop Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-          {filteredWorkshops.map((workshop) => (
-            <WorkshopCard key={workshop.workshop_id} workshop={workshop} />
+          {filteredWorkshops.map((workshop, index) => (
+            <WorkshopCard key={index} workshop={workshop} />
           ))}
         </div>
       </div>
