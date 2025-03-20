@@ -55,6 +55,26 @@ const WorkshopCard = ({ workshop }: { workshop: Workshop }) => {
               <span className="text-xs font-medium">{workshop.rating}</span>
             </div>
           )}
+          {/* Live Status */} 
+          <div className="flex items-center gap-1.5 mb-3 pl-2">
+          {workshop.isActive ? (
+            <span className="flex items-center text-green-600">
+              <span className="relative flex h-3 w-3 mr-1">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
+              </span>
+              <span className="text-xs font-medium">Live</span>
+            </span>
+          ) : (
+            <span className="flex items-center text-red-600">
+              <span className="relative flex h-3 w-3 mr-1">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
+              </span>
+              <span className="text-xs font-medium">Not Live</span>
+            </span>
+          )}
+        </div>
         </div>
 
         {/* Location */}
@@ -62,6 +82,8 @@ const WorkshopCard = ({ workshop }: { workshop: Workshop }) => {
           <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
           <span className="text-xs text-slate-600 truncate">{workshop.Town}, {workshop.state}</span>
         </div>
+
+        
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-1 text-xs text-slate-600 border-t border-slate-200 pt-2">
