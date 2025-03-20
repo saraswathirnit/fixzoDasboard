@@ -888,7 +888,23 @@ export const WorkshopTable: React.FC = () => {
         return (
           <>
             <span className="font-medium text-gray-900">
-              {workshop[columnId] + ""}
+              {workshop[columnId] ? (
+                <>
+                  <span className="relative flex items-center">
+                    <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500 mr-1"></span>
+                    <span className="ml-1">Live</span>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="relative flex items-center">
+                    <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500 mr-1"></span>
+                    <span className="ml-1">Not Live</span>
+                  </span>
+                </>
+              )}  
             </span>
           </>
         );
