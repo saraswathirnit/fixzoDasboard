@@ -301,7 +301,7 @@ const WorkshopCards = () => {
                   <div>
                     <div className="flex items-baseline gap-1">
                       <span className="text-base font-bold text-slate-900">{stats.totalWorkshops}</span>
-                      <span className="text-xs text-slate-500">workshops</span>
+                      <span className="text-xs text-slate-500">workshops in India</span>
                     </div>
                     {bookingsLoading ? (
                       <div className="p-1">
@@ -322,7 +322,7 @@ const WorkshopCards = () => {
                   <div>
                     <div className="flex items-baseline gap-1">
                       <span className="text-base font-bold text-slate-900">{stats.stateWorkshops}</span>
-                      <span className="text-xs text-slate-500">in {filters.selectedState}</span>
+                      <span className="text-xs text-slate-500">in {filters.selectedState} State</span>
                     </div>
                     {bookingsLoading ? (
                       <div className="p-1">
@@ -343,7 +343,7 @@ const WorkshopCards = () => {
                   <div>
                     <div className="flex items-baseline gap-1">
                       <span className="text-base font-bold text-slate-900">{stats.cityWorkshops}</span>
-                      <span className="text-xs text-slate-500">in {filters.selectedCity}</span>
+                      <span className="text-xs text-slate-500">in {filters.selectedCity} City</span>
                     </div>
                     {bookingsLoading ? (
                        <div className="p-1">
