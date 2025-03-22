@@ -420,24 +420,27 @@ const WorkshopCards = () => {
         </div>
 
         {/* Workshop Cards Grid */}
-        <div>
+        <div className="max-h-[32rem] overflow-y-auto">
           {showLive ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-8">
-                {filteredWorkshops
-                  .filter(workshop => workshop.isActive)
-                  .filter(workshop =>
-                    workshop.WorkshopName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    workshop.Town.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
-                  .map((workshop, index) => (
-                    <WorkshopCard key={index} workshop={workshop} />
-                  ))}
+              <div className="bg-white rounded-lg shadow-sm p-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+                  {filteredWorkshops
+                    .filter(workshop => workshop.isActive)
+                    .filter(workshop =>
+                      workshop.WorkshopName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      workshop.Town.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map((workshop, index) => (
+                      <WorkshopCard key={index} workshop={workshop} />
+                    ))}
+                </div>
               </div>
             </>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+               <div className="bg-white rounded-lg shadow-sm p-4 mb-8">
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 {filteredWorkshops
                   .filter(workshop => !workshop.isActive)
                   .filter(workshop =>
@@ -447,6 +450,7 @@ const WorkshopCards = () => {
                   .map((workshop, index) => (
                     <WorkshopCard key={index} workshop={workshop} />
                   ))}
+              </div>
               </div>
             </>
           )}
