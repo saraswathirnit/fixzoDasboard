@@ -389,29 +389,33 @@ const WorkshopCards = () => {
         <div className="flex gap-4 mb-4">
           <button
             onClick={() => setShowLive(true)}
-            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${showLive ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition-all duration-200 transform hover:scale-105 ${
+              showLive ? 'bg-green-500 text-white' : 'bg-green-100 text-green-700'
+            }`}
           >
             <span className="flex items-center">
-              <span className="relative flex h-3 w-3 mr-1">
+              <span className="relative flex h-2 w-2 mr-1">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
               </span>
               Live Workshops
             </span>
-            <span className="bg-white text-blue-500 rounded-full px-2 py-0.5">{liveCount}</span>
+            <span className="bg-white text-green-500 rounded-full px-2 py-0.5 text-xs">{liveCount}</span>
           </button>
           <button
             onClick={() => setShowLive(false)}
-            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${!showLive ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition-all duration-200 transform hover:scale-105 ${
+              !showLive ? 'bg-red-500 text-white' : 'bg-red-100 text-red-700'
+            }`}
           >
             <span className="flex items-center">
-              <span className="relative flex h-3 w-3 mr-1">
+              <span className="relative flex h-2 w-2 mr-1">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500"></span>
               </span>
               No Live
             </span>
-            <span className="bg-white text-blue-500 rounded-full px-2 py-0.5">{noLiveCount}</span>
+            <span className="bg-white text-red-500 rounded-full px-2 py-0.5 text-xs">{noLiveCount}</span>
           </button>
         </div>
 
