@@ -56,7 +56,8 @@ const WorkshopCard = ({ workshop }: { workshop: Workshop }) => {
             </div>
           )}
           {/* Live Status */} 
-          <div className="flex items-center gap-1.5 mb-3 pl-2">
+          
+          {/* <div className="flex items-center gap-1.5 mb-3 pl-2">
           {workshop.isActive ? (
             <span className="flex items-center text-green-600">
               <span className="relative flex h-3 w-3 mr-1">
@@ -74,7 +75,7 @@ const WorkshopCard = ({ workshop }: { workshop: Workshop }) => {
               <span className="text-xs font-medium">Not Live</span>
             </span>
           )}
-        </div>
+        </div> */}
         </div>
 
         {/* Location */}
@@ -139,6 +140,7 @@ const WorkshopCards = () => {
   const [totalBookings, setTotalBookings] = useState(0);
   const [bookingsLoading, setBookingsLoading] = useState(true);
   const [filteredWorkshops, setFilteredWorkshops] = useState<Workshop[]>([]);
+  const [showLive, setShowLive] = useState(true);
 
   useEffect(() => {
     const fetchWorkshops = async () => {
@@ -158,6 +160,9 @@ const WorkshopCards = () => {
 
     fetchWorkshops();
   }, []);
+
+  const liveCount = filteredWorkshops.filter(workshop => workshop.isActive).length;
+  const noLiveCount = filteredWorkshops.filter(workshop => !workshop.isActive).length;
 
   const stats = useMemo(() => {
     const workshopsInState = workshops.filter(w => 
@@ -380,11 +385,67 @@ const WorkshopCards = () => {
 
       {/* Main Content */}
       <div className="max-w-[2000px] mx-auto px-3 sm:px-6 py-4 sm:py-8">
+        {/* Toggle Buttons */}
+        <div className="flex gap-4 mb-4">
+          <button
+            onClick={() => setShowLive(true)}
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${showLive ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+          >
+            <span className="flex items-center">
+              <span className="relative flex h-3 w-3 mr-1">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
+              </span>
+              Live Workshops
+            </span>
+            <span className="bg-white text-blue-500 rounded-full px-2 py-0.5">{liveCount}</span>
+          </button>
+          <button
+            onClick={() => setShowLive(false)}
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${!showLive ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+          >
+            <span className="flex items-center">
+              <span className="relative flex h-3 w-3 mr-1">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
+              </span>
+              No Live
+            </span>
+            <span className="bg-white text-blue-500 rounded-full px-2 py-0.5">{noLiveCount}</span>
+          </button>
+        </div>
+
         {/* Workshop Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-          {filteredWorkshops.map((workshop, index) => (
-            <WorkshopCard key={index} workshop={workshop} />
-          ))}
+        <div>
+          {showLive ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-8">
+                {filteredWorkshops
+                  .filter(workshop => workshop.isActive)
+                  .filter(workshop =>
+                    workshop.WorkshopName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    workshop.Town.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .map((workshop, index) => (
+                    <WorkshopCard key={index} workshop={workshop} />
+                  ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+                {filteredWorkshops
+                  .filter(workshop => !workshop.isActive)
+                  .filter(workshop =>
+                    workshop.WorkshopName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    workshop.Town.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .map((workshop, index) => (
+                    <WorkshopCard key={index} workshop={workshop} />
+                  ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
