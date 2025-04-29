@@ -195,8 +195,8 @@ const WorkshopModal = ({
                   </a>
                 </div>
               )}
-              
-                {/* <div className="flex items-center">
+
+              {/* <div className="flex items-center">
                   <MapPin className="h-5 w-5 text-red-500 mr-2" />
                   <a
                     href={`https://repairs.autorox.co/workshop/vasant-motors-service-center-in-madhapur-hyderabad`}
@@ -530,17 +530,17 @@ const WorkshopModal = ({
                 </h2>
                 <p className="text-gray-600">{workshopDetails?.address}</p>
                 {/* {workshopDetails?.website && ( */}
-                  <a
-                    href={`https://repairs.autorox.co/workshop/gobyk-gandimaisamma-service-center-in-gandimaisamma-hyderabad`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 underline"
-                  >
-                    <span className="flex items-center gap-1 "> 
-                      <ExternalLink className="h-4 w-4 text-blue-600" />
-                      {"Website link"}
-                    </span>
-                  </a>
+                <a
+                  href={`https://repairs.autorox.co/workshop/gobyk-gandimaisamma-service-center-in-gandimaisamma-hyderabad`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline"
+                >
+                  <span className="flex items-center gap-1 ">
+                    <ExternalLink className="h-4 w-4 text-blue-600" />
+                    {"Website link"}
+                  </span>
+                </a>
                 {/* )} */}
               </div>
             </div>
@@ -635,7 +635,9 @@ export const WorkshopTable: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://127.0.0.1:5000/getDashboardData");
+        const response = await fetch(
+          `https://ai.autorox.co/api/ax/dashboard/getDashboardData`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
@@ -904,7 +906,7 @@ export const WorkshopTable: React.FC = () => {
                     <span className="ml-1">Not Live</span>
                   </span>
                 </>
-              )}  
+              )}
             </span>
           </>
         );

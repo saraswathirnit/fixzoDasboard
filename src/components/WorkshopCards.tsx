@@ -107,7 +107,7 @@ const WorkshopCard = ({ workshop }: { workshop: Workshop }) => {
 };
 
 const getStateBookingCounts = async (state: string, city: string) => {
-  const response = await fetch('http://127.0.0.1:5000/api/dashboard/location_bookings', {
+  const response = await fetch('https://ai.autorox.co/api/ax/dashboard/location_bookings', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -145,7 +145,9 @@ const WorkshopCards = () => {
   useEffect(() => {
     const fetchWorkshops = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/getDashboardData');
+        const response = await fetch(
+          `https://ai.autorox.co/api/ax/dashboard/getDashboardData`
+        );
         if (!response.ok) {
           throw new Error('Failed to fetch workshops');
         }
@@ -204,7 +206,7 @@ const WorkshopCards = () => {
 
   const getWorkshopBookingCounts = async (workshopIds: number[]) => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/dashboard/workshopBookingCounts', {
+      const response = await fetch('https://ai.autorox.co/api/ax/dashboard/workshopBookingCounts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -7,7 +7,7 @@ import { LayoutDashboard, Grid, List } from 'lucide-react';
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="min-h-screen bg-gray-100">
         <div className="py-6">
           <div className="mx-auto px-4 sm:px-6 lg:px-8">
